@@ -145,53 +145,57 @@ def validate_credentials(login, password, confirm):
 
 
 # Основной цикл
-print("Регистрация пользователей. Ctrl+C (или Esc в некоторых терминалах) — выход.\n")
+def main_loop():
+    print("Регистрация пользователей. Ctrl+C (или Esc в некоторых терминалах) — выход.\n")
 
-while True:
-    try:
-        login = input("Логин: ").strip()
-        password = input("Пароль: ")
-        confirm = input("Подтверждение пароля: ")
-
-        masked_pass = mask(password)
-        masked_conf = mask(confirm)
-
-        logging.debug("Входные данные: login=%r, password=%s, confirm=%s",
-                      login, masked_pass, masked_conf)
-
+    while True:
         try:
-            success, message = validate_credentials(login, password, confirm)
+            login = input("Логин: ").strip()
+            password = input("Пароль: ")
+            confirm = input("Подтверждение пароля: ")
 
-            if success:
-                registered_users[login] = password
-                logging.info(
-                    "Успешный запрос. login=%r, password=%s, confirm=%s. "
-                    "Результат: True. Сообщение: ''",
-                    login, masked_pass, masked_conf,
-                )
-            else:
-                logging.error(
+            masked_pass = mask(password)
+            masked_conf = mask(confirm)
+
+            logging.debug("Входные данные: login=%r, password=%s, confirm=%s",
+                          login, masked_pass, masked_conf)
+
+            try:
+                success, message = validate_credentials(login, password, confirm)
+
+                if success:
+                    registered_users[login] = password
+                    logging.info(
+                        "Успешный запрос. login=%r, password=%s, confirm=%s. "
+                        "Результат: True. Сообщение: ''",
+                        login, masked_pass, masked_conf,
+                    )
+                else:
+                    logging.error(
+                        "Неуспешный запрос. login=%r, password=%s, confirm=%s. "
+                        "Результат: False. Ошибка: %s",
+                        login, masked_pass, masked_conf, message,
+                    )
+
+                print("Результат:", success)
+                print("Сообщение:", message if message else "(пусто)")
+                print(f"Всего зарегистрировано: {len(registered_users)}")
+                print("-" * 40)
+
+            except Exception as ex:
+                logging.exception(
                     "Неуспешный запрос. login=%r, password=%s, confirm=%s. "
-                    "Результат: False. Ошибка: %s",
-                    login, masked_pass, masked_conf, message,
+                    "Исключение: %s",
+                    login, masked_pass, masked_conf, ex,
                 )
+                print("Результат: False")
+                print(f"Внутренняя ошибка: {ex}")
+                print("-" * 40)
 
-            print("Результат:", success)
-            print("Сообщение:", message if message else "(пусто)")
-            print(f"Всего зарегистрировано: {len(registered_users)}")
-            print("-" * 40)
+        except (KeyboardInterrupt, EOFError):
+            print("\nВыход из программы.")
+            logging.info("Приложение остановлено пользователем")
+            break
 
-        except Exception as ex:
-            logging.exception(
-                "Неуспешный запрос. login=%r, password=%s, confirm=%s. "
-                "Исключение: %s",
-                login, masked_pass, masked_conf, ex,
-            )
-            print("Результат: False")
-            print(f"Внутренняя ошибка: {ex}")
-            print("-" * 40)
-
-    except (KeyboardInterrupt, EOFError):
-        print("\nВыход из программы.")
-        logging.info("Приложение остановлено пользователем")
-        break
+if __name__ == "__main__":
+    main_loop()

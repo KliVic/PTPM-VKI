@@ -2,7 +2,7 @@
 venv/
 ENV/
 env/
-.idea/
+.idea/*
 # Кэш компиляции Python (создается при запусках unittest)
 **/__pycache__/
 *.pyc
