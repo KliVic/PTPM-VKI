@@ -55,9 +55,12 @@ def validate_login(login):
     # Телефон +x-xxx-xxx-xxxx
     if login.startswith("+"):
         parts = login.split("-")
-        if (len(parts) != 4 or not parts[0][1:].isdigit()
+        if (len(parts) != 4
                 or len(parts[0]) != 2
-                or any(not p.isdigit() or len(p) != 3 for p in parts[1:])):
+                or not parts[0][1:].isdigit()
+                or not parts[1].isdigit() or len(parts[1]) != 3
+                or not parts[2].isdigit() or len(parts[2]) != 3
+                or not parts[3].isdigit() or len(parts[3]) != 4):
             return False, "Неверный формат телефона. Ожидается +x-xxx-xxx-xxxx"
 
     # Email
