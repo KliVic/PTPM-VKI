@@ -8,6 +8,7 @@ _original_init = unittest.TextTestRunner.__init__
 
 def _patched_init(self, *args, **kwargs):
     kwargs.setdefault("resultclass", PrettyResult)
+    kwargs.setdefault("verbosity", 0)
     _original_init(self, *args, **kwargs)
 
 
